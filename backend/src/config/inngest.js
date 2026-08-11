@@ -9,13 +9,13 @@ export const inngest = new Inngest({
 const syncUser = inngest.createFunction(
     {
         id: "sync-user",
-        triggers: {
-            event: "clerk/user.created"
-        }
+        triggers: [
+            { event: "clerk/user.created" }
+        ]
     },
     async ({ event }) => {
         await connectDB();
-
+ 
         const {
             id,
             email_addresses,
@@ -23,7 +23,7 @@ const syncUser = inngest.createFunction(
             last_name,
             image_url
         } = event.data;
-
+ 
         const newUser = {
             clerkId: id,
             email: email_addresses[0]?.email_address,
@@ -32,29 +32,31 @@ const syncUser = inngest.createFunction(
             addresses: [],
             wishlist: []
         };
-
+ 
         await User.create(newUser);
+        console.log(`✅ Usuario creado: ${id}`);
     }
 );
-
+ 
 const deleteUserFromDB = inngest.createFunction(
     {
         id: "delete-user-from-db",
-        triggers: {
-            event: "clerk/user.deleted"
-        }
+        triggers: [
+            { event: "clerk/user.deleted" }
+        ]
     },
     async ({ event }) => {
         await connectDB();
-
+ 
         const { id } = event.data;
-
+ 
         await User.deleteOne({
             clerkId: id
         });
+        console.log(`✅ Usuario eliminado: ${id}`);
     }
 );
-
+ 
 export const functions = [
     syncUser,
     deleteUserFromDB
