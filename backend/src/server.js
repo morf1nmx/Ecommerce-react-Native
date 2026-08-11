@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(clerkMiddleware());// add request
 
-app.use("/api/inngest", serve({ client: inngest, functions })); 
+app.post("/api/inngest", serve({ client: inngest, functions })); 
 
 app.get("/api/ecommerce", (req, res) => {
   res.status(200).json({ message: "Success" });
